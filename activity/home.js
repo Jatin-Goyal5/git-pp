@@ -13,7 +13,7 @@ let days =['monday','tuesday','wednesday','thursday','friday','saturday','sunday
             args:["--start-maximised"]
         });
         let page = await browser.pages();
-         tab = page[0];
+        tab = page[0];
         await tab.goto(url);
     
         // link for list for all day 
@@ -61,9 +61,9 @@ async function getlink(scheduleDay){
 async function getInfo(linkList,browser,day){
     try{
         
-    let newTab = await browser.newPage();
+    
     for(let i =0 ; i < linkList.length; ++i){
-
+    let newTab = await browser.newPage();
     await newTab.goto(linkList[i]);
     await newTab.waitForSelector('.title-name',{visible:true});
     
@@ -147,7 +147,7 @@ async function getInfo(linkList,browser,day){
     let summary = await newTab.evaluate(function(element){
         return element.textContent;
     },summaryEvaluate);
-
+    await newTab.close();
 
     if(fs.existsSync(`${day}/${title}.json`)){
         //
@@ -155,9 +155,8 @@ async function getInfo(linkList,browser,day){
         let animeFileName = linkList[i].split('/');
         let filePath = `${day}/${animeFileName[animeFileName.length-2]}`;
         await addDetail(filePath,title,genreList,episodes,detailName , detailInfo,charactersList,score,popularity,summary)
-    }
-
-    } 
+    }   
+} 
 
 
     }
