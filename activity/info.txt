@@ -1,4 +1,0 @@
-span[itemprop="genre"] 
-
-//characters Tag
-.detail-characters-list.clearfix .h3_characters_voice_actors
