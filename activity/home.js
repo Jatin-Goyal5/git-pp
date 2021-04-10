@@ -114,39 +114,40 @@ async function getInfo(linkList,browser,day){
     }
     
     // character 
-    // let link = await newTab.$$("#horiznav_nav li a");
-    // let cLink = await newTab.evaluate(function(element){
-    //     return element.getAttribute('href');
-    // },link[0]);
-    // await newTab.goto(cLink);
-    // // await tab.waitForTimeout(5000);
-    // await newTab.waitForSelector('.detail-characters-list.clearfix .h3_characters_voice_actors',{visible:true});
-    // let characters = await newTab.$$('.detail-characters-list.clearfix .h3_characters_voice_actors');
+    let link = await newTab.$$("#horiznav_nav li a");
+    let cLink = await newTab.evaluate(function(element){
+        return element.getAttribute('href');
+    },link[0]);
+    
+    await newTab.goto(cLink);
+    await newTab.waitForTimeout(5000);    
+    await newTab.waitForSelector('.detail-characters-list.clearfix .h3_characters_voice_actors',{visible:true});
+    let characters = await newTab.$$('.detail-characters-list.clearfix .h3_characters_voice_actors');
 
-    // let charactersList =[];
-    // for(let i =0 ; i < characters.length ; ++i){
-    //     charactersList.push(await newTab.evaluate(function(element){
-    //         return element.textContent;
-    //     },characters[i]));
-    // }
+    let charactersList =[];
+    for(let i =0 ; i < characters.length ; ++i){
+        charactersList.push(await newTab.evaluate(function(element){
+            return element.textContent;
+        },characters[i]));
+    }
 
-    // //score Detail 
-    // let scoreEvaluate = await newTab.$('.score-label'); 
-    // let score = await newTab.evaluate(function(element){
-    //     return element.textContent;
-    // },scoreEvaluate);
+    //score Detail 
+    let scoreEvaluate = await newTab.$('.score-label'); 
+    let score = await newTab.evaluate(function(element){
+        return element.textContent;
+    },scoreEvaluate);
 
-    // // popularity 
-    // let popularityEvaluate = await newTab.$('.numbers.popularity'); 
-    // let popularity = await newTab.evaluate(function(element){
-    //     return element.textContent;
-    // },popularityEvaluate);
+    // popularity 
+    let popularityEvaluate = await newTab.$('.numbers.popularity'); 
+    let popularity = await newTab.evaluate(function(element){
+        return element.textContent;
+    },popularityEvaluate);
 
-    // // summary 
-    // let summaryEvaluate = await newTab.$('p[itemprop="description"]'); 
-    // let summary = await newTab.evaluate(function(element){
-    //     return element.textContent;
-    // },summaryEvaluate);
+    // summary 
+    let summaryEvaluate = await newTab.$('p[itemprop="description"]'); 
+    let summary = await newTab.evaluate(function(element){
+        return element.textContent;
+    },summaryEvaluate);
     await newTab.close();
 
     if(fs.existsSync(`${day}/${title}.json`)){
@@ -154,7 +155,7 @@ async function getInfo(linkList,browser,day){
     }else{
         let animeFileName = linkList[i].split('/');
         let filePath = `${day}/${animeFileName[animeFileName.length-2]}`;
-        await addDetail(filePath,title,genreList,episodes,detailName , detailInfo)
+        await addDetail(filePath,title,genreList,episodes,detailName , detailInfo,charactersList,score,summary,popularity)
     }   
 } 
 
@@ -166,7 +167,7 @@ async function getInfo(linkList,browser,day){
     
 }
 
-async function addDetail(filePath,title ,genreList,episodes,detailName,detailInfo){
+async function addDetail(filePath,title ,genreList,episodes,detailName,detailInfo,charactersList,score,summary,popularity){
    try{
     if(fs.existsSync(filePath)){
         //
@@ -185,7 +186,11 @@ async function addDetail(filePath,title ,genreList,episodes,detailName,detailInf
         let data = [];
         let cdata = {
             title,
-            "genres": genreList,
+            summary,
+            genreList,
+            charactersList,
+            score,
+            popularity,
            
         };
         for(let i =0 ; i < detailInfo.length ; i++){
